@@ -59,6 +59,7 @@ int main()
       test.execute( BytesPending { 2 } );
       test.execute( BytesPushed( 0 ) );
     }
+    
     {
       // Overlapping unassembled section, not resulting in assembly
       const size_t cap = { 1000 };
