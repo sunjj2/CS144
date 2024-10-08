@@ -7,7 +7,7 @@
 
 struct EthernetFrame
 {
-  EthernetHeader header {};
+  EthernetHeader header {};  
   std::vector<std::string> payload {};
 
   void parse( Parser& parser )

@@ -22,6 +22,7 @@
  * 5) The RST (reset) flag. If set, the stream has suffered an error and the connection should be aborted.
  */
 
+
 struct TCPSenderMessage
 {
   Wrap32 seqno { 0 };

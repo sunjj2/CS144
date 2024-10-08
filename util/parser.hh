@@ -12,12 +12,12 @@
 #include <string_view>
 #include <vector>
 
-class Parser
+class Parser//解析
 {
-  class BufferList
+  class BufferList//缓冲区
   {
     uint64_t size_ {};
-    std::deque<std::string> buffer_ {};
+    std::deque<std::string> buffer_ {};//字符串双端序列
     uint64_t skip_ {};
 
   public:
@@ -29,18 +29,18 @@ class Parser
     }
 
     uint64_t size() const { return size_; }
-    uint64_t serialized_length() const { return size(); }
+    uint64_t serialized_length() const { return size(); }  //serialized连载
     bool empty() const { return size_ == 0; }
 
-    std::string_view peek() const
+    std::string_view peek() const//查看缓冲区内的下一元素
     {
       if ( buffer_.empty() ) {
         throw std::runtime_error( "peek on empty BufferList" );
       }
-      return std::string_view { buffer_.front() }.substr( skip_ );
+      return std::string_view { buffer_.front() }.substr( skip_ );//从skip_开始到结束的字符串
     }
 
-    void remove_prefix( uint64_t len )
+    void remove_prefix( uint64_t len )//删除缓冲区内len长度的数据
     {
       while ( len and not buffer_.empty() ) {
         const uint64_t to_pop_now = std::min( len, peek().size() );
@@ -54,7 +54,7 @@ class Parser
       }
     }
 
-    void dump_all( std::vector<std::string>& out )
+    void dump_all( std::vector<std::string>& out )//将缓冲区内的所有元素全部推出到输出区（out）
     {
       out.clear();
       if ( empty() ) {
@@ -71,7 +71,7 @@ class Parser
       }
     }
 
-    void dump_all( std::string& out )
+    void dump_all( std::string& out )//将本来是多个字符串的out转化为一个字符串
     {
       std::vector<std::string> concat;
       dump_all( concat );
@@ -86,7 +86,7 @@ class Parser
       }
     }
 
-    std::vector<std::string_view> buffer() const
+    std::vector<std::string_view> buffer() const//将缓冲区的各个字符串建立一个智能指针，返回这个只能指针组
     {
       if ( empty() ) {
         return {};
@@ -119,7 +119,7 @@ class Parser
   }
 
 public:
-  explicit Parser( const std::vector<std::string>& input ) : input_( input ) {}
+  explicit Parser( const std::vector<std::string>& input ) : input_( input ) {}//使用bufferList对Parser进行初始化
 
   const BufferList& input() const { return input_; }
 
@@ -127,10 +127,10 @@ public:
   void set_error() { error_ = true; }
   void remove_prefix( size_t n ) { input_.remove_prefix( n ); }
 
-  template<std::unsigned_integral T>
-  void integer( T& out )
+  template<std::unsigned_integral T>//T需要是一个无符号整型，包括uint_8,uint_16,uint_32;
+  void integer( T& out )  //将二进制的数据转换为原来的
   {
-    check_size( sizeof( T ) );
+    check_size( sizeof( T ) );//缓冲中的元素大小至少要够一个T才能读数，
     if ( has_error() ) {
       return;
     }
@@ -142,8 +142,8 @@ public:
     } else {
       out = static_cast<T>( 0 );
       for ( size_t i = 0; i < sizeof( T ); i++ ) {
-        out <<= 8;
-        out |= static_cast<uint8_t>( input_.peek().front() );
+        out <<= 8;//左移八位空出来的几位填充为0
+        out |= static_cast<uint8_t>( input_.peek().front() );//input_.peek().front() 返回的字节与 out 进行按位或运算，然后赋值回 out。
         input_.remove_prefix( 1 );
       }
     }
@@ -179,16 +179,20 @@ public:
   explicit Serializer( std::string&& buffer ) : buffer_( std::move( buffer ) ) {}
 
   template<std::unsigned_integral T>
-  void integer( const T val )
+  void integer( const T val )//将原来的值转换为2进制，字节是计算机内存操作的最小单元，可表示 0-255 之间的任意整数。
   {
     constexpr uint64_t len = sizeof( T );
 
     for ( uint64_t i = 0; i < len; ++i ) {
       const uint8_t byte_val = val >> ( ( len - i - 1 ) * 8 );
-      buffer_.push_back( byte_val );
+      buffer_.push_back( byte_val );//将val中的信息写入buffer_中
     }
   }
-
+// 举例：如果 T 是 uint32_t 类型，且 val = 0x12345678，len 为 4。循环执行如下：
+// i = 0 时：val >> (24)，得到最高字节 0x12。
+// i = 1 时：val >> (16)，得到次高字节 0x34。
+// i = 2 时：val >> (8)，得到次低字节 0x56。
+// i = 3 时：val >> (0)，得到最低字节 0x78。
   void buffer( std::string buf )
   {
     flush();

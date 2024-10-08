@@ -32,6 +32,26 @@ string ARPMessage::to_string() const
 
 void ARPMessage::parse( Parser& parser )
 {
+  // void integer( T& out )  //将原始数据转化为2进制的
+  // {
+  //   check_size( sizeof( T ) );//缓冲中的元素大小至少要够一个T才能读数，
+  //   if ( has_error() ) {
+  //     return;
+  //   }
+
+  //   if constexpr ( sizeof( T ) == 1 ) {
+  //     out = static_cast<uint8_t>( input_.peek().front() );
+  //     input_.remove_prefix( 1 );
+  //     return;
+  //   } else {
+  //     out = static_cast<T>( 0 );
+  //     for ( size_t i = 0; i < sizeof( T ); i++ ) {
+  //       out <<= 8;//左移八位空出来的几位填充为0
+  //       out |= static_cast<uint8_t>( input_.peek().front() );//input_.peek().front() 返回的字节与 out 进行按位或运算，然后赋值回 out。
+  //       input_.remove_prefix( 1 );
+  //     }
+  //   }
+  // }
   parser.integer( hardware_type );
   parser.integer( protocol_type );
   parser.integer( hardware_address_size );

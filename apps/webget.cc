@@ -1,5 +1,5 @@
 #include "socket.hh"
-
+#include "tacp minnow socket"
 #include <cstdlib>
 #include <iostream>
 #include <span>
@@ -9,6 +9,26 @@ using namespace std;
 
 void get_URL( const string& host, const string& path )
 {
+   TCPSocket socket;
+        socket.connect(Address(host, "http"));
+
+        // 构造并发送 HTTP GET 请求
+        std::string request = "GET " + path + " HTTP/1.1\r\n";
+        request += "Host: " + host + "\r\n";
+        request += "Connection: close\r\n";
+        request += "\r\n";
+
+        socket.write(request);
+
+        // 读取并输出响应
+        string readtext;
+        while (!socket.eof()) {
+            
+            socket.read(readtext);
+            cout << readtext;
+        }
+        socket.close();
+
   cerr << "Function called: get_URL(" << host << ", " << path << ")\n";
   cerr << "Warning: get_URL() has not been implemented yet.\n";
 }

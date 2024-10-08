@@ -41,7 +41,7 @@ string EthernetHeader::to_string() const
   return ss.str();
 }
 
-void EthernetHeader::parse( Parser& parser )
+void EthernetHeader::parse( Parser& parser ) //解析出以太网首部的信息，从parser的input中读取
 {
   // read destination address
   for ( auto& b : dst ) {
@@ -57,7 +57,8 @@ void EthernetHeader::parse( Parser& parser )
   parser.integer( type );
 }
 
-void EthernetHeader::serialize( Serializer& serializer ) const
+void EthernetHeader::serialize( Serializer& serializer ) const // 将以太网首部的成员变量数据写入到Serializer中，
+//以便将其转化为二进制格式进行传输
 {
   // write destination address
   for ( const auto& b : dst ) {

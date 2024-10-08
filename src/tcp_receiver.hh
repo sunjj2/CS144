@@ -3,6 +3,7 @@
 #include "reassembler.hh"
 #include "tcp_receiver_message.hh"
 #include "tcp_sender_message.hh"
+#include <optional>
 
 class TCPReceiver
 {
@@ -26,5 +27,12 @@ public:
   const Writer& writer() const { return reassembler_.writer(); }
 
 private:
+  uint64_t checkpoint = 0;
   Reassembler reassembler_;
+  uint32_t start_index = 0;
+  std::optional<Wrap32> ack = std::nullopt;
+  bool get_strat = false;
+  uint64_t abs_end_index = 0;
+  bool fin_get =false;
+  bool RST1 = false;  
 };
