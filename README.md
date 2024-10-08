@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Stanford CS 144 Networking Lab
 ==============================
 
@@ -18,3 +19,6 @@ To run speed benchmarks: `cmake --build build --target speed`
 To run clang-tidy (which suggests improvements): `cmake --build build --target tidy`
 
 To format code: `cmake --build build --target format`
+=======
+# CS144
+>>>>>>> ab64814e78365e2fb00792977c6feed25d5679fa
